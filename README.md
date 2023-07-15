@@ -17,7 +17,9 @@ java8、java11
 
 ### 本项目启动方式
 1、电脑先安装jdk运行环境，如果不会安装可百度，或者扫描下方二维码私信于我。
-![苦逼程序猿](./docs/images/qrcode_for_gh_29c75ebcd88d_344.jpg "苦逼程序猿")
+
+![苦逼程序猿](https://www.rjnetwork.net.cn:91//upload/files/64b3030ae4b0ad767283bad7.jpg "苦逼程序猿")
+
 
 2、jdk安装完毕后，设置系统环境变量，可百度。
 
@@ -51,7 +53,7 @@ linux： nohup java -jar xxx.jar
 
 ### 赞助
 可扫描下方二维码赞助作者哦
-![苦逼程序猿](./docs/images/61aa52f4e4b08291bde91e98.png "苦逼程序猿")
+![苦逼程序猿](https://www.rjnetwork.net.cn:91//upload/files/61aa52f4e4b08291bde91e98.png "苦逼程序猿")
 
 
 

@@ -1,0 +1,183 @@
+#@layoutForm()
+<style>
+
+</style>
+#define script()
+<script>
+
+</script>
+#end
+
+#define content()
+
+#tencentConfigDirective()
+#ddnsTaskDirective()
+<div  class="layui-row rjnetwork-container ">
+    <div class="layui-col-sm12">
+
+        <div class="layui-panel">
+
+            <div class="layui-card-body">
+                <div class="layui-row">
+                    <div class="left ">
+                        <div class="layui-btn-group">
+                            <button type="button" class="layui-btn " lay-on="add-iframe-handle">增加</button>
+
+                        </div>
+                    </div>
+
+                </div>
+                <div class="layui-row">
+                    <table class="layui-table">
+                        <thead>
+                        <tr>
+                            <th>应用名称</th>
+                            <th>主域名</th>
+                            <th>记录名称</th>
+                            <th>定时任务类名</th>
+                            <th>CRON</th>
+                            <th>状态</th>
+                            <th>操作</th>
+
+
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        #for(m:ddnsTaskInfoList)
+                        <tr>
+                            <td class="name"><span>#(taskDdnsAppInfo.name??)</span></td>
+                            <td class="domain"><span>#(taskDdnsDomainInfo.domain??)</span></td>
+                            <td class="recordName"><span>#(taskDdnsRecordInfo.recordName??)</span></td>
+
+                            <td class="className"><span>#(m.className??)</span></td>
+                            <td class="cron"><span>#(m.cron??)</span></td>
+                            <td class="statusName"><span>#(m.statusName??)</span></td>
+                            <td>
+                                <div class="layui-btn-group">
+                                    <button  lay-on="edit-iframe-handle" type="button" data-id="#(m.id??)" class="layui-btn layui-btn-primary layui-btn-sm">
+                                        <i class="layui-icon layui-icon-edit" ></i>编辑
+                                    </button>
+                                    <button type="button" data-id="#(m.id??)" lay-on="del-iframe-handle" class="layui-btn layui-btn-primary layui-btn-sm">
+                                        <i class="layui-icon layui-icon-delete"></i>删除
+                                    </button>
+
+                                    <button type="button" data-id="#(m.id??)" lay-on="stop-iframe-handle" class="layui-btn layui-btn-primary layui-btn-sm">
+                                        <i class="layui-icon layui-icon-disabled"></i>停止任务
+                                    </button>
+
+                                    <button type="button" data-id="#(m.id??)" lay-on="start-iframe-handle" class="layui-btn layui-btn-primary layui-btn-sm">
+                                        <i class="layui-icon layui-icon-success"></i>开启任务
+                                    </button>
+
+                                </div>
+
+                            </td>
+                        </tr>
+                        #end
+
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+
+
+
+    <script>
+        layui.use(function(){
+            var $ = layui.$;
+            var layer = layui.layer;
+            var util = layui.util;
+            util.on('lay-on', {
+                'add-iframe-handle':function(){
+                    //mainDomainId  taskDdnsRecordInfo  taskDdnsDomainInfo  taskDdnsAppInfo
+                    layer.open({
+                        title:"新增定时任务",
+                        type: 2,
+                        area: ['80%', '90%'],
+                        content: '/taskList/add?recordId=#(taskDdnsRecordInfo.id??)&domainId=#(taskDdnsDomainInfo.id??)&appId=#(taskDdnsAppInfo.id??)',
+                        fixed: false, // 不固定
+                        maxmin: true,
+                        shadeClose: true,
+                        end:function(){
+                            location.reload();
+                        }
+                    })
+                },
+                'edit-iframe-handle':function (data) {
+                    let id = $(data).attr("data-id");
+                    layer.open({
+                        title:"编辑任务信息",
+                        type: 2,
+                        area: ['80%', '90%'],
+                        content: '/taskList/edit?id='+id+"&recordId=#(taskDdnsRecordInfo.id??)&domainId=#(taskDdnsDomainInfo.id??)&appId=#(taskDdnsAppInfo.id??)",
+                        fixed: false, // 不固定
+                        maxmin: true,
+                        shadeClose: true,
+                        end:function(){
+                            location.reload();
+                        }
+                    })
+                },
+                'del-iframe-handle':function (data){
+                    let id = $(data).attr("data-id");
+                    layer.confirm('确定需要删除吗，请点击下方按钮？', {
+                        btn: ['确定', '关闭'] //按钮
+                    }, function(){
+                        //执行删除操作
+                        $.get('/api/DelTaskById?id='+id,function(){
+                            location.reload();
+                        })
+                    }, function(){
+                        //不执行删除操作
+                    });
+
+
+                },
+                'stop-iframe-handle':function (data) {
+                    let taskId = $(data).attr("data-id");
+                    //记录id
+                    layer.confirm('确定需要停止吗，请点击下方按钮？', {
+                        btn: ['确定', '关闭'] //按钮
+                    }, function(){
+                        //执行删除操作
+                        $.get('/api/stopTask?id='+taskId,function(){
+                            location.reload();
+                        })
+                    }, function(){
+                        //不执行删除操作
+                    });
+                },
+                'start-iframe-handle':function (data) {
+                    let taskId = $(data).attr("data-id");
+                    layer.confirm('确定需要启动吗，请点击下方按钮？', {
+                        btn: ['确定', '关闭'] //按钮
+                    }, function(){
+                        //执行删除操作
+                        $.get('/api/addTask?id='+taskId,function(){
+                            location.reload();
+                        })
+                    }, function(){
+                        //不执行删除操作
+                    });
+
+                }
+
+            })
+        })
+
+
+
+    </script>
+</div>
+#end
+#end
+#end
+
+

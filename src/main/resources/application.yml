@@ -1,0 +1,37 @@
+server:
+  undertow:
+    accesslog:
+      dir: ./logs
+      enabled: true
+      pattern: common
+      prefix: access_log
+      suffix: log
+    max-http-post-size: 0
+    threads:
+      io: 4
+      worker: 20
+    buffer-size: 1024
+    direct-buffers: true
+    url-charset: UTF-8
+  port: 91
+  servlet:
+    context-path: /
+spring:
+  resources:
+    static-locations: classpath:views/
+  datasource:
+    driver-class-name: org.sqlite.JDBC
+    url: jdbc:sqlite:/www/web/dbs/ddns.db
+    username:
+    password:
+devtools:
+  restart:
+    enabled: true
+    #        additional-paths: src/main/java
+    execlude: test/**
+
+
+
+
+
+

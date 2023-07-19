@@ -1,0 +1,86 @@
+#@layoutForm()
+<style>
+    .rjnetwork-container{margin-top: 1rem}
+</style>
+#define script()
+<script>
+
+</script>
+#end
+
+#define content()
+
+#ddnsAppListDirective()
+<div  class="layui-row rjnetwork-container ">
+    <div class="layui-col-sm12">
+
+        <div class="layui-panel">
+            <div >
+
+                <form class="layui-form" >
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">磁力链接</label>
+                        <div class="layui-input-block">
+                            <input type="textarea"  name="link" lay-verify="required" placeholder="请输入磁力链接地址" autocomplete="off" class="layui-textarea">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">trackers</label>
+                        <div class="layui-input-block">
+                            <input type="textarea"  name="trackers"  placeholder="请输入trackers,不是必填项" autocomplete="off" class="layui-textarea">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">文件保存路径</label>
+                        <div class="layui-input-block">
+                            <input type="textarea"  name="fileSavePath"  placeholder="请输入文件保存路径，可以不填" autocomplete="off" class="layui-textarea">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <div class="layui-input-block">
+                            <button type="submit" class="layui-btn" lay-submit lay-filter="form">立即下载</button>
+                        </div>
+                    </div>
+
+                    <script>
+                        layui.use(['form', 'laydate', 'util'], function(){
+                            var form = layui.form;
+                            var layer = layui.layer;
+                            form.on('submit(form)', function(data){
+                                var field = data.field; // 获取表单字段值
+                                $.ajax({
+                                    url:"/api/doDownload",
+                                    data:field,
+                                    method:"post",
+                                    success(res){
+                                        layer.msg(res.msg);
+                                        //需要实时刷新日志，
+                                    }
+                                })
+                                return false; // 阻止默认 form 跳转
+                            })
+
+                        })
+
+                    </script>
+
+                </form>
+            </div>
+        </div>
+
+
+    </div>
+
+
+
+
+
+</div>
+#end
+#end
+
+

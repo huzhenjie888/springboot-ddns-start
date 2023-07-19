@@ -38,11 +38,8 @@ import java.util.concurrent.ScheduledFuture;
 public class DdnsStart implements ApplicationRunner {
 
     private static final String baseResourcePath = DdnsStart.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+    private static final String  projectRootPath = System.getProperty("user.dir");
 
-    /**
-     * 获取系统项目跟目录
-     * */
-    public static final String  projectRootPath = System.getProperty("user.dir");
     @Autowired
     private ApplicationContext context;
     private static String aria2cDist = null;

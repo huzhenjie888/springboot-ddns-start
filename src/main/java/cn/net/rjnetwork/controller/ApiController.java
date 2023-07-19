@@ -6,6 +6,7 @@ import cn.net.rjnetwork.entity.*;
 import cn.net.rjnetwork.mapper.*;
 import cn.net.rjnetwork.result.ResponseWrapper;
 import cn.net.rjnetwork.task.manager.TaskManager;
+import cn.net.rjnetwork.utils.DownloadUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Date;
 
 /**
@@ -166,6 +168,13 @@ public class ApiController {
         ddnsTaskInfoMapper.updateById(temp);
         TaskManager.addTask(ddnsTaskInfoMapper.selectById(id));
         return ResponseWrapper.OK("启动成功");
+    }
+
+
+    @RequestMapping("doDownload")
+    public ResponseWrapper doDownload(String link,String trackers,String fileSavePath) throws IOException {
+        DownloadUtil.startDownload(link,trackers,fileSavePath);
+        return ResponseWrapper.OK("启动成功，下载中，请不要关闭当前页面");
     }
 
     @RequestMapping("doLogin")

@@ -84,4 +84,8 @@ public class IndexController {
     public String login(){
         return "login";
     }
+    @RequestMapping("/fileDownload/download")
+    public String fileDownload(){
+        return "pages/files/download";
+    }
 }

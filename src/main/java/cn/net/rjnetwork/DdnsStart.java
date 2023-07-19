@@ -1,6 +1,6 @@
 package cn.net.rjnetwork;
-
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.io.IoUtil;
 import cn.net.rjnetwork.entity.DdnsTaskInfo;
 import cn.net.rjnetwork.service.TaskService;
 import cn.net.rjnetwork.task.manager.TaskManager;
@@ -14,6 +14,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.ApplicationPidFileWriter;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
@@ -38,42 +39,51 @@ public class DdnsStart implements ApplicationRunner {
 
     private static final String baseResourcePath = DdnsStart.class.getProtectionDomain().getCodeSource().getLocation().getPath();
 
+    /**
+     * 获取系统项目跟目录
+     * */
+    public static final String  projectRootPath = System.getProperty("user.dir");
     @Autowired
     private ApplicationContext context;
-
+    private static String aria2cDist = null;
+    public static String getAria2cInfPath(){
+      return  aria2cDist;
+    }
     @Autowired
     TaskService taskService;
 
-
-
     public static void main(String[] args) throws IOException {
-
+        String osName = System.getProperty("os.name");
+        log.info("osName==={}",osName);
+        aria2cDist =  copyAria2cWin64();
         SpringApplication application =  new SpringApplicationBuilder(DdnsStart.class).build(args);
         application.addListeners(new ApplicationPidFileWriter());
         application.run(DdnsStart.class);
-
-
     }
 
 
+    private static String copyAria2cWin64(){
+        //创建aria2c文件目录。
+        String dist = projectRootPath + "/aria2c/aria2c-win64.exe";
+      try {
 
-    private static void copyFileUsingStream(File source, File dest) throws IOException {
-        InputStream is = null;
-        OutputStream os = null;
-        try {
-            is = new FileInputStream(source);
-            os = new FileOutputStream(dest);
-            byte[] buffer = new byte[1024];
-            int length;
-            while ((length = is.read(buffer)) > 0) {
-                os.write(buffer, 0, length);
-            }
-        } finally {
-            is.close();
-            os.close();
-        }
+          if(!FileUtil.exist(dist)){
+              FileUtil.mkdir(dist);//如果不存在创建目录
+          }
+          ClassPathResource resource = null;
+          FileOutputStream outputStream = null;
+          resource = new ClassPathResource("aria2c/aria2c-win64.exe");
+          InputStream fis = resource.getInputStream();
+          outputStream = new FileOutputStream(  new File(dist) );
+          IoUtil.copy(fis,outputStream);
+          outputStream.close();
+
+      }catch (Exception e){
+        log.error("复制失败{}",e.getMessage(),e);
+      }finally {
+        return dist;
+      }
     }
-
 
     @Override
     public void run(ApplicationArguments args) throws Exception {

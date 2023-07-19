@@ -1,20 +1,17 @@
 package cn.net.rjnetwork.controller;
 
 import cn.hutool.core.util.StrUtil;
-import cn.net.rjnetwork.entity.DdnsAppInfo;
-import cn.net.rjnetwork.entity.DdnsDomainInfo;
-import cn.net.rjnetwork.entity.DdnsRecordInfo;
-import cn.net.rjnetwork.entity.DdnsTaskInfo;
-import cn.net.rjnetwork.mapper.DdnsAppInfoMapper;
-import cn.net.rjnetwork.mapper.DdnsDomainInfoMapper;
-import cn.net.rjnetwork.mapper.DdnsRecordInfoMapper;
-import cn.net.rjnetwork.mapper.DdnsTaskInfoMapper;
+import cn.hutool.crypto.SecureUtil;
+import cn.net.rjnetwork.entity.*;
+import cn.net.rjnetwork.mapper.*;
 import cn.net.rjnetwork.result.ResponseWrapper;
 import cn.net.rjnetwork.task.manager.TaskManager;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 
@@ -28,7 +25,13 @@ import java.util.Date;
 @RequestMapping("/api/")
 public class ApiController {
 
+    @Autowired
+    HttpServletRequest request;
 
+    @Autowired
+    DdnsUserInfoMapper ddnsUserInfoMapper;
+    @Autowired
+    DdnsSessionInfoMapper ddnsSessionInfoMapper;
 
     @Autowired
     HttpServletResponse response;
@@ -163,6 +166,32 @@ public class ApiController {
         ddnsTaskInfoMapper.updateById(temp);
         TaskManager.addTask(ddnsTaskInfoMapper.selectById(id));
         return ResponseWrapper.OK("启动成功");
+    }
+
+    @RequestMapping("doLogin")
+    public ResponseWrapper doLogin(String userName,String password){
+        if(StrUtil.isBlankOrUndefined(userName)){
+            return ResponseWrapper.ERROR("用户名不能为空");
+        }
+        if(StrUtil.isBlankOrUndefined(password)){
+            return ResponseWrapper.ERROR("密码不能为空");
+        }
+        String pwd = SecureUtil.md5(password);
+        LambdaQueryWrapper<DdnsUserInfo> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(DdnsUserInfo::getUsername,userName).eq(DdnsUserInfo::getPassword,pwd);
+        lambdaQueryWrapper.last("limit 1");
+        DdnsUserInfo inf = ddnsUserInfoMapper.selectOne(lambdaQueryWrapper);
+        if(inf==null){
+            return  ResponseWrapper.ERROR("用户名或密码错误");
+        }
+        String sessionId = request.getSession().getId();
+        DdnsSessionInfo ddnsSessionInfo = new DdnsSessionInfo();
+        ddnsSessionInfo.setSession(sessionId);
+        ddnsSessionInfo.setUserId(inf.getId());
+        ddnsSessionInfo.setLoginFlag(1);
+        ddnsSessionInfo.setLoginTime(new Date());
+        ddnsSessionInfoMapper.insert(ddnsSessionInfo);
+        return ResponseWrapper.OK("登录成功");
     }
 
 

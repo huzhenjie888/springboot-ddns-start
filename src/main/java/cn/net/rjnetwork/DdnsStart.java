@@ -51,13 +51,12 @@ public class DdnsStart implements ApplicationRunner {
         SpringApplication application =  new SpringApplicationBuilder(DdnsStart.class).build(args);
         application.addListeners(new ApplicationPidFileWriter());
         //先判断sqllite文件是否已存在，如果不存在，则把resources的sqllite文件copy一份。
-        if(!FileUtil.exist("/www/web/dbs/ddns.db")){
-            File source = new File(baseResourcePath+"dbs/ddns.db");
-            File dist = FileUtil.touch("/www/web/dbs/ddns.db");
-            copyFileUsingStream(source,dist);
-            //FileUtil.copy(FileUtil.file(baseResourcePath+"dbs/ddns.db"),dist,false);
-        }
-        log.info("加载中");
+//        if(!FileUtil.exist("/www/web/dbs/ddns.db")){
+//            File source = new File(baseResourcePath+"dbs/ddns.db");
+//            File dist = FileUtil.touch("/www/web/dbs/ddns.db");
+//            copyFileUsingStream(source,dist);
+//            //FileUtil.copy(FileUtil.file(baseResourcePath+"dbs/ddns.db"),dist,false);
+//        }
         application.run(DdnsStart.class);
 
 

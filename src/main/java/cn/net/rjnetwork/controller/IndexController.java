@@ -7,11 +7,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 public class IndexController {
 
-    @RequestMapping("/")
+    @RequestMapping("/welcome")
     public String index(){
         return "pages/welcome";
     }
-
 
     @RequestMapping("/config/tencent")
     public String configTencent(){
@@ -67,5 +66,9 @@ public class IndexController {
     @RequestMapping("/taskList/edit")
     public String taskListEdit(){
         return "pages/ddns/task/edit";
+    }
+    @RequestMapping("/login")
+    public String login(){
+        return "login";
     }
 }

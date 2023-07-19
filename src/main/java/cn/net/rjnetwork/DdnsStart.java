@@ -53,6 +53,7 @@ public class DdnsStart implements ApplicationRunner {
         String osName = System.getProperty("os.name");
         log.info("osName==={}",osName);
         aria2cDist =  copyAria2cWin64();
+        copyTrackers();
         SpringApplication application =  new SpringApplicationBuilder(DdnsStart.class).build(args);
         application.addListeners(new ApplicationPidFileWriter());
         application.run(DdnsStart.class);
@@ -61,11 +62,11 @@ public class DdnsStart implements ApplicationRunner {
 
     private static String copyAria2cWin64(){
         //创建aria2c文件目录。
-        String dist = projectRootPath + "/aria2c/aria2c-win64.exe";
+        String distDir = projectRootPath + "/aria2c/";
+        String dist = distDir + "aria2c-win64.exe";
       try {
-
-          if(!FileUtil.exist(dist)){
-              FileUtil.mkdir(dist);//如果不存在创建目录
+          if(!FileUtil.exist(distDir)){
+              FileUtil.mkdir(distDir);//如果不存在创建目录
           }
           ClassPathResource resource = null;
           FileOutputStream outputStream = null;
@@ -80,6 +81,25 @@ public class DdnsStart implements ApplicationRunner {
       }finally {
         return dist;
       }
+    }
+
+    private static  void copyTrackers(){
+        String distDir = projectRootPath + "/aria2c/";
+        String dist = distDir + "trackers.txt";
+        try {
+            if(!FileUtil.exist(distDir)){
+                FileUtil.mkdir(distDir);//如果不存在创建目录
+            }
+            ClassPathResource resource = null;
+            FileOutputStream outputStream = null;
+            resource = new ClassPathResource("aria2c/trackers.txt");
+            InputStream fis = resource.getInputStream();
+            outputStream = new FileOutputStream(  new File(dist) );
+            IoUtil.copy(fis,outputStream);
+            outputStream.close();
+        }catch (Exception e){
+            log.error("复制失败{}",e.getMessage(),e);
+        }
     }
 
     @Override

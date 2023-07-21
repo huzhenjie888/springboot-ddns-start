@@ -1,15 +1,11 @@
 package cn.net.rjnetwork.utils;
 import cn.hutool.core.io.FileUtil;
-import cn.hutool.core.io.IoUtil;
-import cn.hutool.core.util.RuntimeUtil;
-import cn.hutool.core.util.StrUtil;
-import cn.net.rjnetwork.DdnsStart;
+import cn.net.rjnetwork.entity.Aria2Option;
 import lombok.extern.slf4j.Slf4j;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.UUID;
 
 /**
  * @auther huzhenjie
@@ -29,36 +25,43 @@ public class DownloadUtil {
     }
 
     public static void startDownload(String link,String trackers,String dist) throws IOException, InterruptedException {
-        StringBuffer sb = new StringBuffer();
-        sb.append(DdnsStart.getAria2cInfPath());
-        sb.append(" ");
-        if(!StrUtil.isBlankOrUndefined(dist)){
-            sb.append(" --conf-path=").append(dist);
-        }
-        if(StrUtil.isBlankOrUndefined(trackers)){
-            sb.append(" --bt-tracker=");
-            for(int i=0;i<trackersList.size();i++){
-                sb.append(trackersList.get(i));
-                if(i!= trackersList.size()-1){
-                    sb.append(",");
-                }
-            }
-        }else {
-            sb.append(" --bt-tracker=").append(trackers);
-        }
 
-        if(StrUtil.isBlankOrUndefined(link)){
-            throw new RuntimeException("请添加磁力链接信息");
-        }else{
-            sb.append(" ").append(link).append(" > ").append("process").append(".txt");
+        Aria2Option aria2Option = new Aria2Option();
+        aria2Option.setDir(dist==null?"./download/":dist);
+        aria2Option.setReferer("*");
+       // magnet:?xt=urn:btih:3a87bac211fd5cd49b81c33eca69919c4a5a74fd&dn=zh-cn_windows_11_business_editions_version_22h2_updated_june_2023_x64_dvd_8e846a1e.iso&xl=5844441088
+       //截取文件名称
+        if(link.contains("magnet")){
+            //代表磁力链接
+           String[] arr = link.split(":");
+           if(arr.length>0){
+               String a = arr[arr.length-1];
+              String[] c = a.split("=");
+              if(c.length>2){
+                  String d = c[c.length-2];
+                  aria2Option.setOut(d.split("&")[0]);
+              }
+           }
         }
-         log.info("拼接好的命令为{}",sb);
-        Process process = RuntimeUtil.exec(sb.toString());
-        int i = process.waitFor();
-        String err =IoUtil.readUtf8(process.getErrorStream());
-        String result = IoUtil.readUtf8(process.getInputStream());
-         log.info("下载启动完毕{},{},err={}",result,i,err);
+        log.info("组合参数为 {}",aria2Option);
+        Aria2Json aria2Json = new Aria2Json(UUID.randomUUID().toString());
+        aria2Json.setMethod(Aria2Json.METHOD_ADD_URI)
+                .addParam(new String[]{link})
+                .addParam(aria2Option);
 
+        String send = aria2Json.send(null);
+
+        log.info("send=={}",send);
+    }
+
+    public static void main(String[] args) {
+        String s = "magnet:?xt=urn:btih:3a87bac211fd5cd49b81c33eca69919c4a5a74fd&dn=zh-cn_windows_11_business_editions_version_22h2_updated_june_2023_x64_dvd_8e846a1e.iso&xl=5844441088\n" +
+                "   ";
+        String[] arr = s.split(":");
+        String a = arr[arr.length-1];
+        String[] ab = a.split("=");
+        String c = ab[ab.length-2];
+        System.out.println(c);
     }
 
 

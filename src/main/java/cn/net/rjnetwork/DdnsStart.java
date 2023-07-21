@@ -2,6 +2,7 @@ package cn.net.rjnetwork;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.IoUtil;
 import cn.net.rjnetwork.entity.DdnsTaskInfo;
+import cn.net.rjnetwork.init.Aria2cInit;
 import cn.net.rjnetwork.service.TaskService;
 import cn.net.rjnetwork.task.manager.TaskManager;
 import lombok.extern.slf4j.Slf4j;
@@ -50,56 +51,24 @@ public class DdnsStart implements ApplicationRunner {
     TaskService taskService;
 
     public static void main(String[] args) throws IOException {
-        String osName = System.getProperty("os.name");
-        log.info("osName==={}",osName);
-        aria2cDist =  copyAria2cWin64();
-        copyTrackers();
+        log.info("开始启动应用----start-----");
+        Aria2cInit.copyAria2c();
+        killApplyInfo();
         SpringApplication application =  new SpringApplicationBuilder(DdnsStart.class).build(args);
         application.addListeners(new ApplicationPidFileWriter());
         application.run(DdnsStart.class);
     }
 
-
-    private static String copyAria2cWin64(){
-        //创建aria2c文件目录。
-        String distDir = projectRootPath + "/aria2c/";
-        String dist = distDir + "aria2c-win64.exe";
-      try {
-          if(!FileUtil.exist(distDir)){
-              FileUtil.mkdir(distDir);//如果不存在创建目录
-          }
-          ClassPathResource resource = null;
-          FileOutputStream outputStream = null;
-          resource = new ClassPathResource("aria2c/aria2c-win64.exe");
-          InputStream fis = resource.getInputStream();
-          outputStream = new FileOutputStream(  new File(dist) );
-          IoUtil.copy(fis,outputStream);
-          outputStream.close();
-
-      }catch (Exception e){
-        log.error("复制失败{}",e.getMessage(),e);
-      }finally {
-        return dist;
-      }
-    }
-
-    private static  void copyTrackers(){
-        String distDir = projectRootPath + "/aria2c/";
-        String dist = distDir + "trackers.txt";
-        try {
-            if(!FileUtil.exist(distDir)){
-                FileUtil.mkdir(distDir);//如果不存在创建目录
-            }
-            ClassPathResource resource = null;
-            FileOutputStream outputStream = null;
-            resource = new ClassPathResource("aria2c/trackers.txt");
-            InputStream fis = resource.getInputStream();
-            outputStream = new FileOutputStream(  new File(dist) );
-            IoUtil.copy(fis,outputStream);
-            outputStream.close();
-        }catch (Exception e){
-            log.error("复制失败{}",e.getMessage(),e);
-        }
+    private static void killApplyInfo()  {
+        //读取项目目录下面的application.pid文件
+       try{
+           String pid =   FileUtil.readString(projectRootPath+"/application.pid","UTF-8");
+           String killCmd = "taskkill /f /t /im  "+pid;
+           Process process =  Runtime.getRuntime().exec(killCmd);
+           log.info("执行命令结果为{}",IoUtil.readUtf8(process.getInputStream()));
+       }catch (Exception e){
+          log.error("杀死应用失败{}",e.getMessage(),e);
+       }
     }
 
     @Override

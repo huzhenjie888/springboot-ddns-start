@@ -53,20 +53,8 @@ public class Aria2cInit {
         }finally {
             //复制成功；启动rpc服务。先关闭 在启动
             killAria2cWinRpc();
-            startAria2cWinRpc();
         }
 
-    }
-
-
-    public static void startAria2cWinRpc()  {
-        try{
-            StringBuffer sb = new StringBuffer();
-            sb.append(winAria2cExe).append(" --conf-path=./aria2.conf > aria2.out.txt").append("\n").append("pause");
-            Runtime.getRuntime().exec(sb.toString());
-        }catch (Exception e){
-            log.error("启动rpc服务失败{}",e.getMessage(),e);
-        }
     }
 
     public static void killAria2cWinRpc() {

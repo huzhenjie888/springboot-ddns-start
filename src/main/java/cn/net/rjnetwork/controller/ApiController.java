@@ -172,8 +172,8 @@ public class ApiController {
 
 
     @RequestMapping("doDownload")
-    public ResponseWrapper doDownload(String link,String trackers,String fileSavePath) throws Exception {
-        DownloadUtil.startDownload(link,trackers,fileSavePath);
+    public ResponseWrapper doDownload(String link,String fileSavePath,String fileName) throws Exception {
+        DownloadUtil.startDownload(link,fileSavePath,fileName);
         return ResponseWrapper.OK("启动成功，下载中，请不要关闭当前页面");
     }
 

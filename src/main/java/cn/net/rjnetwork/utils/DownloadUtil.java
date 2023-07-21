@@ -15,7 +15,6 @@ import java.util.UUID;
  */
 @Slf4j
 public class DownloadUtil {
-    //private static final String baseResourcePath = DownloadUtil.class.getProtectionDomain().getCodeSource().getLocation().getPath();
     private static final String  projectRootPath = System.getProperty("user.dir");
     private static final List<String> trackersList = new ArrayList<>();
     static  {
@@ -24,33 +23,17 @@ public class DownloadUtil {
         log.info("trackers==={}",trackersList);
     }
 
-    public static void startDownload(String link,String trackers,String dist) throws IOException, InterruptedException {
-
+    public static void startDownload(String link,String dist,String fileName) throws IOException, InterruptedException {
         Aria2Option aria2Option = new Aria2Option();
         aria2Option.setDir(dist==null?"./download/":dist);
         aria2Option.setReferer("*");
-       // magnet:?xt=urn:btih:3a87bac211fd5cd49b81c33eca69919c4a5a74fd&dn=zh-cn_windows_11_business_editions_version_22h2_updated_june_2023_x64_dvd_8e846a1e.iso&xl=5844441088
-       //截取文件名称
-        if(link.contains("magnet")){
-            //代表磁力链接
-           String[] arr = link.split(":");
-           if(arr.length>0){
-               String a = arr[arr.length-1];
-              String[] c = a.split("=");
-              if(c.length>2){
-                  String d = c[c.length-2];
-                  aria2Option.setOut(d.split("&")[0]);
-              }
-           }
-        }
+        aria2Option.setOut(fileName);
         log.info("组合参数为 {}",aria2Option);
         Aria2Json aria2Json = new Aria2Json(UUID.randomUUID().toString());
         aria2Json.setMethod(Aria2Json.METHOD_ADD_URI)
                 .addParam(new String[]{link})
                 .addParam(aria2Option);
-
         String send = aria2Json.send(null);
-
         log.info("send=={}",send);
     }
 

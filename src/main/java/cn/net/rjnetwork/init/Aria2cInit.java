@@ -31,11 +31,10 @@ public class Aria2cInit {
 
     private static final String winDistDir = projectRootPath + "/aria2c/";
 
-    public static final String winAria2cExe = winDistDir  + "aria2c-win64.exe";
-
     public static void copyAria2c(){
         //将此目录下的所有文件copy一份
         try {
+
             Resource[] resources =  new PathMatchingResourcePatternResolver().getResources(ResourceUtils.CLASSPATH_URL_PREFIX+"aria2c/*.*");
             for(Resource resource :resources){
                 String dist = winDistDir + resource.getFilename();
@@ -48,40 +47,19 @@ public class Aria2cInit {
                 IoUtil.copy(fis,outputStream);
                 outputStream.close();
             }
+            //复制完毕，以后台形式启动aria2c rpc服务。
+            String cmd ="cmd /c "+projectRootPath+ "/aria2c/RunHide.vbs";
+            Process process = Runtime.getRuntime().exec(cmd);
+            String res = IoUtil.readUtf8(process.getInputStream());
+            log.info("执行的结果为{}",res);
         }catch (Exception e){
             log.error("复制失败{}",e.getMessage(),e);
-        }finally {
-            //复制成功；启动rpc服务。先关闭 在启动
-            killAria2cWinRpc();
         }
 
     }
 
-    public static void killAria2cWinRpc() {
-       try {
-           String pidByPortCmd = "netstat -aon|findstr  6800 ";
-           Process process = Runtime.getRuntime().exec(pidByPortCmd);
-           String pid = IoUtil.readUtf8(process.getInputStream());
-           log.info("查找到的pid信息为{}",pid);
-           if((isNumeric(pid))){
-               String killCmd = "taskkill /f /t /im  "+pid;
-               Process process1 =  Runtime.getRuntime().exec(killCmd);
-               log.info("执行命令结果为{}",IoUtil.readUtf8(process1.getInputStream()));
-           }
-       } catch (Exception e){
-           log.error("杀死失败{}",e.getMessage(),e);
-       }
-    }
 
 
-    private static Boolean isNumeric(String str){
-        Pattern pa  = Pattern.compile("[0-9]*");
-        Matcher ma = pa.matcher(str);
-        if(ma.matches()){
-            return true;
-        }else{
-            return false;
-        }
-    }
+
 
 }

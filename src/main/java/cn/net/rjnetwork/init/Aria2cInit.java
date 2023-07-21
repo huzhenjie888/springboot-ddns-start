@@ -5,11 +5,15 @@ import cn.hutool.core.io.IoUtil;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.util.ResourceUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -29,26 +33,21 @@ public class Aria2cInit {
 
     public static final String winAria2cExe = winDistDir  + "aria2c-win64.exe";
 
-    private static final String baseResourcePath = Aria2cInit.class.getProtectionDomain().getCodeSource().getLocation().getPath()+"aria2c/";
-
     public static void copyAria2c(){
         //将此目录下的所有文件copy一份
         try {
-        List<String> fileNames = FileUtil.listFileNames(baseResourcePath);
-        for(String fileName :fileNames){
-            String dist = winDistDir + fileName;
-            String classPathDist = baseResourcePath + fileName;
-            if(!FileUtil.exist(winDistDir)){
-                    FileUtil.mkdir(winDistDir);//如果不存在创建目录
+            Resource[] resources =  new PathMatchingResourcePatternResolver().getResources(ResourceUtils.CLASSPATH_URL_PREFIX+"aria2c/*.*");
+            for(Resource resource :resources){
+                String dist = winDistDir + resource.getFilename();
+                if(!FileUtil.exist(winDistDir)){
+                        FileUtil.mkdir(winDistDir);//如果不存在创建目录
+                }
+                FileOutputStream outputStream = null;
+                InputStream fis = resource.getInputStream();
+                outputStream = new FileOutputStream(  new File(dist) );
+                IoUtil.copy(fis,outputStream);
+                outputStream.close();
             }
-            ClassPathResource resource = null;
-            FileOutputStream outputStream = null;
-            resource = new ClassPathResource(classPathDist);
-            InputStream fis = resource.getInputStream();
-            outputStream = new FileOutputStream(  new File(dist) );
-            IoUtil.copy(fis,outputStream);
-            outputStream.close();
-        }
         }catch (Exception e){
             log.error("复制失败{}",e.getMessage(),e);
         }finally {

@@ -16,11 +16,15 @@ import org.springframework.boot.context.ApplicationPidFileWriter;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.springframework.scheduling.config.TriggerTask;
 import org.springframework.scheduling.support.CronTrigger;
+import org.springframework.util.ResourceUtils;
+
 import java.io.*;
 import java.lang.reflect.Field;
 import java.util.List;
@@ -38,7 +42,7 @@ import java.util.concurrent.ScheduledFuture;
 @Slf4j
 public class DdnsStart implements ApplicationRunner {
 
-    private static final String baseResourcePath = DdnsStart.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+    private static final String baseResourcePath = DdnsStart.class.getProtectionDomain().getCodeSource().getLocation().getPath()+"aria2c/";
     private static final String  projectRootPath = System.getProperty("user.dir");
 
     @Autowired

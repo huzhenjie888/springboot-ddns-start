@@ -29,9 +29,16 @@ public class DownloadUtil {
         aria2Option.setReferer("*");
         aria2Option.setOut(fileName);
         log.info("组合参数为 {}",aria2Option);
+        StringBuffer trackers = new StringBuffer();
+        for(int i =0;i<trackersList.size();i++){
+            trackers.append(trackersList.get(i));
+            if(i!=trackersList.size()-1){
+                trackers.append(",");
+            }
+        }
         Aria2Json aria2Json = new Aria2Json(UUID.randomUUID().toString());
         aria2Json.setMethod(Aria2Json.METHOD_ADD_URI)
-                .addParam(new String[]{link})
+                .addParam(new String[]{trackers.toString(),link})
                 .addParam(aria2Option);
         String send = aria2Json.send(null);
         log.info("send=={}",send);

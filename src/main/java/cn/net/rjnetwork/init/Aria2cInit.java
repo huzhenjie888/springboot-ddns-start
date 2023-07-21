@@ -2,21 +2,13 @@ package cn.net.rjnetwork.init;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.IoUtil;
-
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.util.ResourceUtils;
-
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * @auther huzhenjie
@@ -48,10 +40,15 @@ public class Aria2cInit {
                 outputStream.close();
             }
             //复制完毕，以后台形式启动aria2c rpc服务。
-            String cmd ="cmd /c "+projectRootPath+ "/aria2c/RunHide.vbs";
-            Process process = Runtime.getRuntime().exec(cmd);
+            //执行vbs脚本
+            StringBuffer sb = new StringBuffer();
+            sb.append(" cmd /c  ").append(winDistDir).append("RunHide.vbs").append(" & ");
+            log.info("执行的cmd命令为{}",sb);
+            Process	process = Runtime.getRuntime().exec(sb.toString());
+            process.waitFor();
             String res = IoUtil.readUtf8(process.getInputStream());
-            log.info("执行的结果为{}",res);
+            String err = IoUtil.readUtf8(process.getErrorStream());
+            log.info("执行的结果为{},{}",res,err);
         }catch (Exception e){
             log.error("复制失败{}",e.getMessage(),e);
         }

@@ -86,6 +86,6 @@ public class IndexController {
     }
     @RequestMapping("/fileDownload/download")
     public String fileDownload(){
-        return "pages/files/download";
+        return "aria2cui/index";
     }
 }

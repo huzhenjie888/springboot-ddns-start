@@ -57,6 +57,10 @@ public class Aria2cInit {
 
 
 
+    public static void main(String[] args) {
+        String str = "text";
+        System.out.println(FileUtil.getSuffix(str));
+    }
 
 
 }

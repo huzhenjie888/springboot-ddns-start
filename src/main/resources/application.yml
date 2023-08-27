@@ -13,7 +13,7 @@ server:
     buffer-size: 1024
     direct-buffers: true
     url-charset: UTF-8
-  port: 91
+  port: 20001
   servlet:
     context-path: /
 spring:
@@ -21,7 +21,7 @@ spring:
     static-locations: classpath:views/
   datasource:
     driver-class-name: org.sqlite.JDBC
-    url: jdbc:sqlite:/Users/huzhenjie/Desktop/codes/v/ddns.db
+    url: jdbc:sqlite:/data/ddns/dbs/ddns.db
     username:
     password:
 devtools:

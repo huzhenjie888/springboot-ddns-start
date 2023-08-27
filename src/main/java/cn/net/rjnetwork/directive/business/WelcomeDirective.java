@@ -2,7 +2,6 @@ package cn.net.rjnetwork.directive.business;
 
 import cn.net.rjnetwork.ano.RjnetworkDircetive;
 import cn.net.rjnetwork.directive.RjnetworkDirectiveBase;
-import cn.net.rjnetwork.ips.Ipv4Utils;
 import cn.net.rjnetwork.ips.Ipv6Util;
 import cn.net.rjnetwork.utils.SpringContextUtil;
 import com.jfinal.template.Env;
@@ -25,7 +24,7 @@ public class WelcomeDirective  extends RjnetworkDirectiveBase {
 
     @Override
     public void exec(Env env, Scope scope, Writer writer) {
-        String ipv4 = Ipv4Utils.getIp();
+        String ipv4 = cn.net.rjnetwork.qixiaozhu.plugins.ddns.ips.Ipv4Utils.getIp();
         scope.set("ipv4Internet",ipv4);
 
         Map<String,String> ipv6s = Ipv6Util.getLocalIpv6();

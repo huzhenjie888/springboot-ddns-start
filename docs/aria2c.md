@@ -1,0 +1,2 @@
+git
+https://github.com/aria2/aria2/releases

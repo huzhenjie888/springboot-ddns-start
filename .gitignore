@@ -4,6 +4,9 @@ target/
 !**/src/test/**/target/
 logs/
 .idea/
+aria2c
+application.pid
+application.port
 ### IntelliJ IDEA ###
 .idea/modules.xml
 .idea/jarRepositories.xml
@@ -37,3 +40,4 @@ build/
 
 ### Mac OS ###
 .DS_Store
+/aria2c/

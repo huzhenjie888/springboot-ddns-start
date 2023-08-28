@@ -1,7 +1,8 @@
 package cn.net.rjnetwork;
-
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.io.IoUtil;
 import cn.net.rjnetwork.entity.DdnsTaskInfo;
+import cn.net.rjnetwork.init.Aria2cInit;
 import cn.net.rjnetwork.service.TaskService;
 import cn.net.rjnetwork.task.manager.TaskManager;
 import lombok.extern.slf4j.Slf4j;
@@ -14,11 +15,15 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.ApplicationPidFileWriter;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.springframework.scheduling.config.TriggerTask;
 import org.springframework.scheduling.support.CronTrigger;
+
 import java.io.*;
 import java.lang.reflect.Field;
 import java.util.List;
@@ -36,51 +41,38 @@ import java.util.concurrent.ScheduledFuture;
 @Slf4j
 public class DdnsStart implements ApplicationRunner {
 
-    private static final String baseResourcePath = DdnsStart.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+    private static final String baseResourcePath = DdnsStart.class.getProtectionDomain().getCodeSource().getLocation().getPath()+"aria2c/";
+    private static final String  projectRootPath = System.getProperty("user.dir");
 
     @Autowired
     private ApplicationContext context;
-
+    private static String aria2cDist = null;
+    public static String getAria2cInfPath(){
+      return  aria2cDist;
+    }
     @Autowired
     TaskService taskService;
 
-
-
     public static void main(String[] args) throws IOException {
-
+        log.info("开始启动应用----start-----");
+        Aria2cInit.copyAria2c();
+        killApplyInfo();
         SpringApplication application =  new SpringApplicationBuilder(DdnsStart.class).build(args);
         application.addListeners(new ApplicationPidFileWriter());
-        //先判断sqllite文件是否已存在，如果不存在，则把resources的sqllite文件copy一份。
-//        if(!FileUtil.exist("/www/web/dbs/ddns.db")){
-//            File source = new File(baseResourcePath+"dbs/ddns.db");
-//            File dist = FileUtil.touch("/www/web/dbs/ddns.db");
-//            copyFileUsingStream(source,dist);
-//            //FileUtil.copy(FileUtil.file(baseResourcePath+"dbs/ddns.db"),dist,false);
-//        }
         application.run(DdnsStart.class);
-
-
     }
 
-
-
-    private static void copyFileUsingStream(File source, File dest) throws IOException {
-        InputStream is = null;
-        OutputStream os = null;
-        try {
-            is = new FileInputStream(source);
-            os = new FileOutputStream(dest);
-            byte[] buffer = new byte[1024];
-            int length;
-            while ((length = is.read(buffer)) > 0) {
-                os.write(buffer, 0, length);
-            }
-        } finally {
-            is.close();
-            os.close();
-        }
+    private static void killApplyInfo()  {
+        //读取项目目录下面的application.pid文件
+       try{
+           String pid =   FileUtil.readString(projectRootPath+"/application.pid","UTF-8");
+           String killCmd = "taskkill /f /t /im  "+pid;
+           Process process =  Runtime.getRuntime().exec(killCmd);
+           log.info("执行命令结果为{}",IoUtil.readUtf8(process.getInputStream()));
+       }catch (Exception e){
+          log.error("杀死应用失败{}",e.getMessage(),e);
+       }
     }
-
 
     @Override
     public void run(ApplicationArguments args) throws Exception {

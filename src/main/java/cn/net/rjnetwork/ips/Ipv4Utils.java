@@ -1,10 +1,7 @@
-package cn.net.rjnetwork.qixiaozhu.plugins.ddns.ips;
-
-import cn.hutool.http.HttpUtil;
+package cn.net.rjnetwork.ips;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
@@ -52,14 +49,7 @@ public class Ipv4Utils {
 
 
     public static void main(String[] args) throws IOException {
-        String source = "112.10.214";
-        StringBuffer sb = new StringBuffer();
-
-        for(int i =97;i<255;i++){
-            sb.append(source).append(".").append(i).append(",");
-        }
-        System.out.println(sb.toString());
-//       String ip = Ipv4Utils.getIp();
-//        System.out.println(ip);
+       String ip = Ipv4Utils.getIp();
+        System.out.println(ip);
     }
 }

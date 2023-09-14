@@ -19,6 +19,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.scheduling.TaskScheduler;
+import org.springframework.scheduling.Trigger;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.springframework.scheduling.config.TriggerTask;
@@ -91,10 +92,9 @@ public class DdnsStart implements ApplicationRunner {
                 Field taskId = task.getClass().getDeclaredField("taskId");
                 taskId.setAccessible(true);
                 taskId.set(task, ddnsTaskInfo.getId());
-                TriggerTask triggerTask =  new TriggerTask((Runnable) task, triggerContext -> {
-                    String cronExpression = ddnsTaskInfo.getCron();
-                    return new CronTrigger(cronExpression).nextExecutionTime(triggerContext);
-                });
+                String cronExpression = ddnsTaskInfo.getCron();
+                Trigger trigger = new CronTrigger(cronExpression);
+                TriggerTask triggerTask =  new TriggerTask((Runnable) task, trigger);
                 //添加初始任务
                 TaskScheduler taskScheduler = scheduledTaskRegistrar.getScheduler();
                 ScheduledFuture<?> future =taskScheduler.schedule(triggerTask.getRunnable(), triggerTask.getTrigger());

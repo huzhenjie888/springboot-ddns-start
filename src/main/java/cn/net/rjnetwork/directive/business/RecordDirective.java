@@ -11,7 +11,7 @@ import com.jfinal.template.Env;
 import com.jfinal.template.io.Writer;
 import com.jfinal.template.stat.Scope;
 import org.springframework.stereotype.Component;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * @auther huzhenjie

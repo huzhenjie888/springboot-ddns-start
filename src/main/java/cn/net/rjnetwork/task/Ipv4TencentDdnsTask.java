@@ -4,6 +4,7 @@ import cn.hutool.json.JSONUtil;
 import cn.net.rjnetwork.config.ScheduledOfTask;
 import cn.net.rjnetwork.dns.TencentDnspodManager;
 import cn.net.rjnetwork.entity.*;
+import cn.net.rjnetwork.ips.Ipv4Utils;
 import cn.net.rjnetwork.service.TaskService;
 import com.tencentcloudapi.dnspod.v20210323.DnspodClient;
 import com.tencentcloudapi.dnspod.v20210323.models.RecordListItem;
@@ -44,7 +45,7 @@ public class Ipv4TencentDdnsTask implements ScheduledOfTask {
             log.info("本次定时任务只是定时更新已经存在的解析记录信息，所以需要先在运营商处进行第一次解析，否则下面会报错，无法进行更新");
             DnspodClient dnspodClient = TencentDnspodManager.getDnspodClient(ddnsAppInfo.getSecretId(),ddnsAppInfo.getSecretKey(),ddnsAppInfo.getRegion());
             log.info("当前需要更新的域名信息为{},{}",ddnsDomainInfo,ddnsRecordInfo);
-            String ip = cn.net.rjnetwork.qixiaozhu.plugins.ddns.ips.Ipv4Utils.getIp();
+            String ip = Ipv4Utils.getIp();
             log.info("本机器的ipv4公网IP为{}",ip);
             RecordListItem item = TencentDnspodManager.getSubRecordInfo(dnspodClient,ddnsDomainInfo.getDomain(),ddnsRecordInfo.getRecordName());
             log.info("从服务商获取的解析记录信息为{}",JSONUtil.toJsonStr(item));

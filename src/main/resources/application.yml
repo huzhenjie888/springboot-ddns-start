@@ -21,7 +21,7 @@ spring:
     static-locations: classpath:views/
   datasource:
     driver-class-name: org.sqlite.JDBC
-    url: jdbc:sqlite:/data/ddns/dbs/ddns.db
+    url: jdbc:sqlite:/Users/huzhenjie/Desktop/codes/v/ddns.db
     username:
     password:
 devtools:

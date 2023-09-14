@@ -1,14 +1,21 @@
 package cn.net.rjnetwork.controller;
 
+import cn.hutool.core.io.IoUtil;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Controller
-
+@Slf4j
 public class IndexController {
 
     @Autowired
@@ -87,5 +94,26 @@ public class IndexController {
     @RequestMapping("/fileDownload/download")
     public String fileDownload(){
         return "aria2cui/index";
+    }
+
+    @GetMapping("/public/**")
+    public void getStaticResource(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String requestPath = request.getRequestURI();
+        String filePath = requestPath.split("public/")[1];
+        log.info("获取的文件路径信息为....||{}",filePath);
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        log.info("当前线程的classLoader为....||{}",classLoader);
+        ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(classLoader);
+        //URL url = PluginContextHolder.getPluginClassLoader().getResource("/webs/"+insidePluginDescriptor.getPluginId()+"/views/"+filePath);
+
+        Resource[]  resources = resolver.getResources("/views/"+filePath);
+        log.info("获取的资源列表为{},{}",resources.length,resources);
+        Resource resource = resources[0];
+        if(resource==null){
+            throw new RuntimeException("资源不存在");
+        }
+        //response.getWriter().
+        IoUtil.write(response.getOutputStream(),true, IoUtil.readBytes(resource.getInputStream()));
+        //return Files.readAllBytes(Paths.get(resource.getURI()));
     }
 }

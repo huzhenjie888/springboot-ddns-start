@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.5.6</version>
+        <version>3.1.0</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -14,8 +14,8 @@
     <artifactId>springboot-ddns-start</artifactId>
 
     <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
     </properties>
 
     <repositories>
@@ -65,9 +65,9 @@
 
 
         <dependency>
-            <groupId>com.jfinal</groupId>
-            <artifactId>enjoy</artifactId>
-            <version>5.1.1</version>
+            <groupId>cn.net.rjnetwork</groupId>
+            <artifactId>enjoy-spring</artifactId>
+            <version>5.1.2</version>
         </dependency>
 
         <dependency>
@@ -120,7 +120,6 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.12</version>
         </dependency>
 
         <dependency>

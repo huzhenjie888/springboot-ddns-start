@@ -1,13 +1,14 @@
 package cn.net.rjnetwork.utils;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+
 
 @Component
 public class SpringContextUtil implements ApplicationContextAware {
@@ -47,13 +48,13 @@ public class SpringContextUtil implements ApplicationContextAware {
         return getApplicationContext().getBean(name, clazz);
     }
 
-    public static HttpServletRequest  getRequest(){
+    public static HttpServletRequest getRequest(){
         ServletRequestAttributes servletRequestAttributes =  (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = servletRequestAttributes.getRequest();
         return request;
     }
 
-    public static HttpServletResponse  getResponse(){
+    public static HttpServletResponse getResponse(){
         ServletRequestAttributes servletRequestAttributes =  (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletResponse response = servletRequestAttributes.getResponse();
         return response;

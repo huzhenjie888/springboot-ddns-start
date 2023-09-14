@@ -3,13 +3,13 @@ package cn.net.rjnetwork.interceptor;
 import cn.net.rjnetwork.entity.DdnsSessionInfo;
 import cn.net.rjnetwork.mapper.DdnsSessionInfoMapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * @auther huzhenjie
@@ -30,8 +30,11 @@ public class LoginInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-
        String sessionId = request.getSession().getId();
+        String URI = request.getRequestURI();
+        if(URI.startsWith("/public/")){
+            return true;
+        }
         LambdaQueryWrapper<DdnsSessionInfo> ddnsSessionInfoLambdaQueryWrapper = new LambdaQueryWrapper<>();
         ddnsSessionInfoLambdaQueryWrapper.eq(DdnsSessionInfo::getSession,sessionId);
         ddnsSessionInfoLambdaQueryWrapper.eq(DdnsSessionInfo::getLoginFlag,1);

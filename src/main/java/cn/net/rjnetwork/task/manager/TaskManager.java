@@ -5,6 +5,7 @@ import cn.net.rjnetwork.utils.SpringContextUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.TaskScheduler;
+import org.springframework.scheduling.Trigger;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.springframework.scheduling.config.TriggerTask;
 import org.springframework.scheduling.support.CronTrigger;
@@ -98,10 +99,9 @@ public class TaskManager {
                 Field taskId = task.getClass().getDeclaredField("taskId");
                 taskId.setAccessible(true);
                 taskId.set(task, ddnsTaskInfo.getId());
-                triggerTask =  new TriggerTask((Runnable) task,   triggerContext -> {
-                    String cronExpression = ddnsTaskInfo.getCron();
-                    return new CronTrigger(cronExpression).nextExecutionTime(triggerContext);
-                });
+                String cronExpression = ddnsTaskInfo.getCron();
+                Trigger trigger = new CronTrigger(cronExpression);
+                triggerTask =  new TriggerTask((Runnable) task,  trigger);
             } catch (Exception e){
                 log.error("任务启动化失败{}",e.getMessage(),e);
             }finally {
